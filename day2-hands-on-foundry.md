@@ -8,8 +8,7 @@
     - [事前確認](#事前確認)
     - [Foundry リソースを作成し、モデルをデプロイする](#foundry-リソースを作成しモデルをデプロイする)
     - [Agent を作成する](#agent-を作成する)
-    - [Fabric Data Agent を接続する](#fabric-data-agent-を接続する)
-    - [Agent を公開し、エンドポイントを確認する](#agent-を公開しエンドポイントを確認する)
+    - [Agent を公開する](#agent-を公開する)
     - [Teams へ公開する](#teams-へ公開する)
     - [Playground と Teams で動作確認する](#playground-と-teams-で動作確認する)
     - [補足](#補足)
@@ -33,53 +32,66 @@
 
 ### Foundry リソースを作成し、モデルをデプロイする
 
-1. Azure portal で Foundry リソースを作成する（既存がある場合は再利用可）。
-2. 基本情報で次を設定する。
-   - リソース グループ: Day1 と同一または運営指定
-   - 名前: `foundry-aidata-＜unique＞`
-   - リージョン: Day1 と同一リージョン推奨
-3. [確認と作成] -> [作成] を実行する。
+Azure portal で Foundry リソースを作成する（既存がある場合は再利用可）。
+1. `https://portal.azure.com` を開いてサインインします。
+2. **Microsoft Foundry** を検索し、 **Foundry** → **+ 作成** を選択します。
+3. **基本情報**で次を設定する。
+   - **リソース グループ**: Day1 と同一または運営指定
+   - **名前**: `foundry-aidata-＜unique＞`
+   - **リージョン**: Day1 と同一リージョン推奨
+  ![Crete foundry basics](image/day2-hands-on-foundry/create-foundry-basics.png)
+4. **ストレージ**で次を設定する。
+   - **Key Vault**: **Azure Key Vault の選択** → **新規作成** →　**追加**
+   - **Application Insights**: **Application Insights の選択** → **新規作成** → **追加**
+  ![Crete foundry storage](image/day2-hands-on-foundry/create-foundry-storage.png)
+5. [確認と作成] -> [作成] を実行する。
+![create foundry ](image/day2-hands-on-foundry/create-foundry-create.png)
+デプロイ完了後:
+6. Foundry リソースを開き、**Foundry ポータルに移動**、対象プロジェクトに移動する。
+7. **ビルド** → **モデル** → **基本モデルをデプロイする** を開き、`gpt-5.4-mini` を検索する。
+8. `gpt-5.4-mini` を選択し、**デプロイ** → **既定の設定** を選びます。
 
-![day2 foundry resource 01](images/day2-foundry-resource-01.png)
-
-4. 作成後、Foundry ポータルを開き、対象プロジェクトに移動する。
-5. [ビルド] -> [モデル] から `gpt-5.4-mini` を検索し、既定設定でデプロイする。
-
-![day2 deploy model gpt54mini 01](images/day2-deploy-model-gpt54mini-01.png)
+![deploy model gpt54mini 01](image/day2-hands-on-foundry/deploy-gpt-model.png)
 
 ### Agent を作成する
 
-1. Foundry プロジェクトで [エージェント] -> [エージェントの作成] を選択する。
-2. 次の内容で Agent を作成する。
-   - エージェント名: `aidata-agent-app＜No＞`（任意）
-   - モデル: `gpt-5.4-mini`
-
-![day2 create agent 01](images/day2-create-agent-01.png)
-
-3. Instructions に次を設定する。
+1. Foundry プロジェクトを開き、**エージェント** → **エージェントの作成** を選択し、**エージェント名**を `aidata-agent-app＜No＞` にして作成する。
+2. 次の情報を設定します。
+   - **モデル**: `gpt-5.4-mini`
+   - **手順**: 次を設定する。
 
 ```text
 あなたは Fabric Data Agent を利用して、業務データに基づく回答を返すアシスタントである。
 回答には対象期間と集計観点を明示し、可能な限り根拠を示すこと。
 ```
 
-![day2 agent instructions 01](images/day2-agent-instructions-01.png)
+![create agent](image/day2-hands-on-foundry/create-agent.png)
 
-### Fabric Data Agent を接続する
+3. **ツール**:
+   1. **Web search** ツールを削除します。
+   2. **Fabric Data Agent** ツールを追加します。
+      a. **追加** → **すべてのツールを参照する** を選択
+      ![すべてのツールを参照](image/day2-hands-on-foundry/agent-add-tool.png)
+      b. **Fabric Data Agent** を選択し、**ツールを追加**
+      ![Fabric Data Agent ツールの選択](image/day2-hands-on-foundry/agent-select-fabric-data-agent.png)
+      c. **Fabric Data Agent に接続する**
+      - **ワークスペース ID**: `<workspace_id>`
+      - **アーティファクト ID**: `<artifact_id>`
+      > Fabric データ エージェントの URL から artifact_id の値をコピーします。URL のパスは、.../groups/<workspace_id>/aiskills/<artifact_id>... のようになっています。値は GUID です。
+      ![ワークスペース ID と　アーティファクト ID](image/day2-hands-on-foundry/workspace-and-artiface-id.png)
+      d. **接続** を選択します。
+      ![Fabric Data Agent 接続](image/day2-hands-on-foundry/connect-fabric-data-agent.png)
 
-1. 作成した Agent の [Tools]（または [接続]）を開く。
-2. `Microsoft Fabric` / `Fabric Data Agent` 系コネクタを追加する。
-3. Day1 で作成した Data Agent を選択して接続する。
-   - ワークスペース: `aidataws＜No＞`
-   - Data Agent: `aidatadataagent＜No＞`
-4. 接続後、Agent を保存する。
+4. **メモリ** → **作成** → **メモリ ストアを作成する** を選択します。
+5. Agent を保存する。
+6. Agent をテストする。
+   **プレイグラウンド** に次のメッセージを入力します。ツール呼び出しの承認を求められたら許可します。
+   `Emploee 毎のProfitの合計を年毎に出して`
+   ![Chat result response](image/day2-hands-on-foundry/agent-chat-response.png)
 
-![day2 connect fabric data agent 01](images/day2-connect-fabric-data-agent-01.png)
-![day2 connect fabric data agent 02](images/day2-connect-fabric-data-agent-02.png)
+### Agent を公開する
 
-### Agent を公開し、エンドポイントを確認する
-
-1. Agent の [Deploy]（または [公開]）を実行する。
+1. Agentで、**発行する**  → **Teams と Microsoft365に対して発行する**
 2. 公開後、以下を控える。
    - Project endpoint
    - Agent ID（または Deployment 名）

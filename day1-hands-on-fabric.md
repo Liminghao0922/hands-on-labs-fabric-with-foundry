@@ -15,7 +15,7 @@
 ### 事前確認
 
 - Azure ポータルでリソースグループに接続でき、リソースを作成する権限が付与されている。
-  > Subscriptionに対して Owner , もしくは　Contributor　+ User Access Manager が付与されている。
+  > 作業用のリソースグループに対して共同作成者およびユーザーアクセス管理者権限が付与されている。
   >
 - Fabric ポータルにインターネットで接続できる。
 - Fabric Free ライセンス、Power BI Pro ライセンスが付与されている。

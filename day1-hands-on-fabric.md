@@ -101,7 +101,7 @@ az sql server create --name $server --resource-group "rgaidatahandson＜No＞" -
 
 > ※ ＜＞内は自身の環境に応じて適宜書き換える。
 
-8. 作成された SQL Database を開き、次の設定を行う。
+8. 作成された SQL Serverを開き、次の設定を行う。
 
 **アクセス制御 (IAM)**：　[ロールの割り当ての追加] で自身のアカウントに [SQL Server 共同作成者] を割り当てる。
 
@@ -122,6 +122,8 @@ az sql server create --name $server --resource-group "rgaidatahandson＜No＞" -
 | サービスの目標           | S3       |
 
 > ※ SQL Server Management Studio から行うときのパラメータは上記を指定する。
+>
+> ![Import data-tier application](image/day1-hands-on-fabric/import-data-tier-application.png)
 
 
 | 属性               | 値       |
@@ -145,7 +147,7 @@ S3 = DTU 100 : 12 分 ～ 15 分
 > ※ データベースのリストアは少し時間がかかるため、処理中も後続の作業を進める。
 > ※ Azure ポータルでリストアを行っている場合は、後続の作業をブラウザの別タブで行う。
 
-10. ブラウザで新しいタブを開き、次の URL に接続し、Fabric ポータルを開く。
+10.  ブラウザで新しいタブを開き、次の URL に接続し、Fabric ポータルを開く。
 
 [https://app.fabric.microsoft.com/](https://app.fabric.microsoft.com/)
 
@@ -155,8 +157,10 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 [ユーザーは、Fabric 外部のアプリを使用して OneLake に格納されているデータにアクセスできます]
 
-12. Fabric ポータルにログインして、画面左下の [Power BI] をクリックし、[Fabric] に切り替える。
-13. [Fabric へようこそ] の画面で [新しいワークスペース] をクリックし、ワークスペースを作成する。
+[**ユーザーは Ontology (プレビュー) アイテムを作成できます**]
+
+12.  Fabric ポータルにログインして、画面左下の [Power BI] をクリックし、[Fabric] に切り替える。
+13.  [Fabric へようこそ] の画面で [新しいワークスペース] をクリックし、ワークスペースを作成する。
 
 
 | 属性                 | 値                                                                              |
@@ -261,7 +265,6 @@ S3 = DTU 100 : 12 分 ～ 15 分
 ![check table creation](image/day1-hands-on-fabric/create-copy-job.png)
 
 ※ 新しい項目は、カテゴリで [データを取得] - [コピージョブ] を指定する。
-
 
 | 属性                                       | 値                                           |
 | ------------------------------------------ | -------------------------------------------- |
@@ -389,14 +392,14 @@ S3 = DTU 100 : 12 分 ～ 15 分
 | 2     | LastETLCutoffTime   | Datetime | @formatDateTime('2010-01-01') | □              | Input |
 
 ```sql
-DELETE FROM [Integration].[City\_Staging];
-DELETE FROM [Integration].[Customer\_Staging];
-DELETE FROM [Integration].[Employee\_Staging];
-DELETE FROM [Integration].[StockItem\_Staging];
-INSERT INTO [Integration].[City\_Staging] EXEC Integration.GetCityUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
-INSERT INTO [Integration].[Customer\_Staging] EXEC Integration.GetCustomerUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
-INSERT INTO [Integration].[Employee\_Staging] EXEC Integration.GetEmployeeUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
-INSERT INTO [Integration].[StockItem\_Staging] EXEC Integration.GetStockItemUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
+DELETE FROM [Integration].[City_Staging];
+DELETE FROM [Integration].[Customer_Staging];
+DELETE FROM [Integration].[Employee_Staging];
+DELETE FROM [Integration].[StockItem_Staging];
+INSERT INTO [Integration].[City_Staging] EXEC Integration.GetCityUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
+INSERT INTO [Integration].[Customer_Staging] EXEC Integration.GetCustomerUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
+INSERT INTO [Integration].[Employee_Staging] EXEC Integration.GetEmployeeUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
+INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdates @LastETLCutoffTime, @TargetETLCutoffTime;
 ```
 
 ![pipeline-add-script-configuration](image/day1-hands-on-fabric/pipeline-add-script-configruation.png)
@@ -491,7 +494,6 @@ INSERT INTO [Integration].[StockItem\_Staging] EXEC Integration.GetStockItemUpda
 
    次の内容で接続を作成する。
 
-
    | 属性                   | 値                                                |
    | ---------------------- | ------------------------------------------------- |
    | イベントハブの名前空間 | aidataeventhubnamespace＜No＞                     |
@@ -500,7 +502,6 @@ INSERT INTO [Integration].[StockItem\_Staging] EXEC Integration.GetStockItemUpda
    | 認証の種類             | 基本                                              |
    | ユーザー名             | ＜Event Hubs の共有アクセスポリシーのポリシー名＞ |
    | パスワード             | ＜Event Hubs の共有アクセスポリシーの主キー＞     |
-
 
    > ※ 記載のないパラメータは既定値を使用する。
    > ※ 当ハンズオンはイベントハブの名前空間の SAS キーを使用しているが、実際のプロジェクトにおいては、セキュリティを考慮し、イベントハブ毎の SAS キーを作成することを推奨する。
@@ -526,7 +527,7 @@ INSERT INTO [Integration].[StockItem\_Staging] EXEC Integration.GetStockItemUpda
 
 ![event hub send event](image/day1-hands-on-fabric/event-hub-send-event.png)
 
-14. 画面右に表示される [イベントの送信] で [.json ファイルをアップロード] 横にある [参照] をクリックして、コーチから配布された [calendar\_2013.json] ファイルをアップロードし、[送信] をクリックする。
+14.  画面右に表示される [イベントの送信] で [.json ファイルをアップロード] 横にある [参照] をクリックして、コーチから配布された [calendar_2013.json] ファイルをアップロードし、[送信] をクリックする。
 
 ![event hub send event for calendar](image/day1-hands-on-fabric/event-hub-send-event-for-calendar.png)
 
@@ -607,10 +608,10 @@ INSERT INTO [Integration].[StockItem\_Staging] EXEC Integration.GetStockItemUpda
 
 27. ブラウザ で、Azure ポータルの Event Hubs を開いていたタブに切り替え、本章、手順 13 - 15 を再度実行し、Event Hubs に次の 4 つのファイルを再送信する。
 
-- calendar\_2013.json
-- calendar\_2014.json
-- calendar\_2015.json
-- calendar\_2016.json
+- calendar_2013.json
+- calendar_2014.json
+- calendar_2015.json
+- calendar_2016.json
 
 ※ 各ファイルは 1 回ずつ送信する。
 
@@ -725,14 +726,14 @@ calendar
 
 ![select aidatadb tables](image/day1-hands-on-fabric/select-aidatadb-tables.png)
 
-12. セマンティックモデルの [モデルビュー] に戻るので、[Fact\_Sale] を中心にその他のテーブルを周囲に配置する。
+12. セマンティックモデルの [モデルビュー] に戻るので、[Fact_Sale] を中心にその他のテーブルを周囲に配置する。
 
 ![semantic model model view](image/day1-hands-on-fabric/semantic-model-model-view.png)
 
 > ※ 配置については視認性向上のためのもので、機能や作業順に影響するものではない。
-> ※ [Fact\_Sale] を中心としたスタースキーマとなるので、ディメンションはどの位置でもよい。
+> ※ [Fact_Sale] を中心としたスタースキーマとなるので、ディメンションはどの位置でもよい。
 
-13. [Fact\_Sale] テーブルの [CityKey] 列をドラッグし、[City\_Staging] テーブルの [City Staging Key] 列にドロップする。
+13. [Fact_Sale] テーブルの [CityKey] 列をドラッグし、[City\_Staging] テーブルの [City Staging Key] 列にドロップする。
 
 ![semantic model citykey](image/day1-hands-on-fabric/semantic-model-city-key.png)
 
@@ -752,13 +753,10 @@ calendar
 15. 前の手順 13, 14 と同様に次の内容でリレーションを作成する。
 
 ```
-[Fact\_Sale].[CustomerKey] - [Customer\_Staging].[ Customer Staging Key]
-
-[Fact\_Sale].[ StockItemKey] - [StockItem\_Staging].[StockItem Staging Key]
-
-[Fact\_Sale].[SalespersonKey] - [Employee\_Staging].[Employee Staging Key]
-
-[Fact\_Sale].[InvoiceDateKey] - [Calendar].[Date]
+[Fact_Sale].[CustomerKey] - [Customer_Staging].[ Customer Staging Key]
+[Fact_Sale].[StockItemKey] - [StockItem_Staging].[StockItem Staging Key]
+[Fact_Sale].[SalespersonKey] - [Employee_Staging].[Employee Staging Key]
+[Fact_Sale].[InvoiceDateKey] - [Calendar].[Date]
 ```
 
 > ※ [カーディナリティ], [クロスフィルターの方向], [このリレーションシップをアクティブにする] は、すべて先と同じ内容にする。
@@ -770,22 +768,21 @@ calendar
 
 ※ 編集モードで手を加えた内容は自動で保存されている。
 
-17. メニューの [オントロジーの生成] をクリックする。
+17. リボンから  [オントロジーの生成] をクリックする。
     ![Generate Ontology](image/day1-hands-on-fabric/generate-ontology.png)
 18. 次の内容で [オントロジー（プレビュー）] を作成する。
 
 ![Create Ontology](image/day1-hands-on-fabric/create-ontology.png)
 
-
 | 属性 | 値                   |
 | ---- | -------------------- |
 | 名前 | aidataontology＜No＞ |
 
-19. [aidataontology＜No＞] が自動で開くので、画面左の [エクスプローラー] で [Fact\_Sale] をクリックする。
+19. [aidataontology＜No＞] が自動で開くので、画面左の [エクスプローラー] で [Fact_Sale] をクリックする。
 
 ![Ontology Fact_Sale](image/day1-hands-on-fabric/ontology-fact_sale.png)
 
-> ※ [Fact\_Sale] を中心としたグラフ構造が見えることを確認する。
+> ※ [Fact_Sale] を中心としたグラフ構造が見えることを確認する。
 > ※ 本機能は現在プレビューとなっているため、この後では利用しない。
 > ※ オントロジーを作成する際に [Ontology へようこそ] が表示されることがあるが、再度表示させたくない場合は [今後表示しない] にチェックを入れ画面を閉じる。
 

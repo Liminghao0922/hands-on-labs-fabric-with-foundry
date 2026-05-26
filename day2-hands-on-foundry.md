@@ -9,9 +9,7 @@
     - [Foundry リソースを作成し、モデルをデプロイする](#foundry-リソースを作成しモデルをデプロイする)
     - [Agent を作成する](#agent-を作成する)
     - [Agent を公開する](#agent-を公開する)
-    - [Teams へ公開する](#teams-へ公開する)
-    - [Playground と Teams で動作確認する](#playground-と-teams-で動作確認する)
-    - [補足](#補足)
+    - [Teams で動作確認する](#teams-で動作確認する)
 
 ### Day2 のゴール
 
@@ -41,15 +39,15 @@ Azure portal で Foundry リソースを作成する（既存がある場合は�
    - **リージョン**: Day1 と同一リージョン推奨
   ![Crete foundry basics](image/day2-hands-on-foundry/create-foundry-basics.png)
 4. **ストレージ**で次を設定する。
-   - **Key Vault**: **Azure Key Vault の選択** → **新規作成** →　**追加**
-   - **Application Insights**: **Application Insights の選択** → **新規作成** → **追加**
+   - **Key Vault**: **Azure Key Vault の選択** →　**追加**
+   - **Application Insights**: **Application Insights の選択** → **追加**
   ![Crete foundry storage](image/day2-hands-on-foundry/create-foundry-storage.png)
-5. [確認と作成] -> [作成] を実行する。
+1. [確認と作成] -> [作成] を実行する。
 ![create foundry ](image/day2-hands-on-foundry/create-foundry-create.png)
 デプロイ完了後:
-6. Foundry リソースを開き、**Foundry ポータルに移動**、対象プロジェクトに移動する。
-7. **ビルド** → **モデル** → **基本モデルをデプロイする** を開き、`gpt-5.4-mini` を検索する。
-8. `gpt-5.4-mini` を選択し、**デプロイ** → **既定の設定** を選びます。
+1. Foundry リソースを開き、**Foundry ポータルに移動**、対象プロジェクトに移動する。
+2. **ビルド** → **モデル** → **基本モデルをデプロイする** を開き、`gpt-5.4-mini` を検索する。
+3. `gpt-5.4-mini` を選択し、**デプロイ** → **既定の設定** を選びます。
 
 ![deploy model gpt54mini 01](image/day2-hands-on-foundry/deploy-gpt-model.png)
 
@@ -92,45 +90,37 @@ Azure portal で Foundry リソースを作成する（既存がある場合は�
 ### Agent を公開する
 
 1. Agentで、**発行する**  → **Teams と Microsoft365に対して発行する**
-2. 公開後、以下を控える。
-   - Project endpoint
-   - Agent ID（または Deployment 名）
-3. 認証方式（推奨: Microsoft Entra ID）を確認する。
+2. **Teams と Microsoft 365 に対して発行する**にて以下の値を指定する。
+   - **短い説明**: `aidata ハンズオンで作成した Foundry Agent`
+   - **説明**: `aidata ハンズオンで作成した Foundry Agent`
+   - **開発者**: <your name>
+  ![publish agent](image/day2-hands-on-foundry/publish-agent.png)
+3. **発行オプション** にて以下の値を指定し、→ **発行**。
+   - **直接発行**
+   - **組織内のユーザー**
+   ![publish agent options](image/day2-hands-on-foundry/publish-agent-options.png)
+4. 発行が成功したら、[Microsoft 365 管理センター](https://admin.cloud.microsoft/?#/agents/all/requested) を開く。
+   ![publish agent ](image/day2-hands-on-foundry/publish-agent-finished.png)
+5. 発行されたAgent `foundry-aidata-＜unique＞`を選択し、**Publish to store**をクリックする。
+   ![publish agent ](image/day2-hands-on-foundry/publish-agent-to-store.png)
 
-![day2 publish agent endpoint 01](images/day2-publish-agent-endpoint-01.png)
+6. Agentを利用できるユーザーを選択し、次へ。
+    ![publish agent ](image/day2-hands-on-foundry/publish-agent-select-users.png)
+7. 既定のテンプレートを選択し、次へ。
+   ![publish agent ](image/day2-hands-on-foundry/publish-agent-select-template.png)
+8. 次へ。
+9. 発行。
+   ![publish agent ](image/day2-hands-on-foundry/publish-agent-publish.png)
 
-### Teams へ公開する
+### Teams で動作確認する
 
-1. Agent のチャネル連携で [Microsoft Teams] を選択する。
-2. 次の公開情報を設定して公開する。
-   - アプリ表示名
-   - 説明
-   - アイコン（任意）
-3. 公開後、配布リンクまたは Teams アプリパッケージを取得する。
-4. 管理者承認が必要な環境では、管理者に承認依頼を行う。
+1. Teams を開いて、**Copilot** → **All Agents**, `aidata-agent-app＜No＞`で検索し、選択する。
+2. **Add** をクリックする。
+3. 開いたChat　Windowsにて、以下の問い合わせを実施し、回答されることを確認する。
+   `2013年と2014年で、EmployeeごとのProfit合計を比較して。`
+   >　必要に応じて、ログインを実行する。
 
-![day2 publish teams channel 01](images/day2-publish-teams-channel-01.png)
+  ![chat response example](image/day2-hands-on-foundry/teams-chat-reposnse-example.png)
 
-### Playground と Teams で動作確認する
-
-1. Foundry Playground で次を実行し、Fabric Data Agent 経由で回答されることを確認する。
-   - `2023年と2024年で、EmployeeごとのProfit合計を比較して。`
-
-![day2 playground test 01](images/day2-playground-test-01.png)
-
-2. Teams で対象アプリをインストールする。
-
-![day2 teams install app 01](images/day2-teams-install-app-01.png)
-
-3. Teams の 1:1 チャットまたはチャネルで同じ問い合わせを実行する。
-4. Playground と同じ傾向の結果（期間、増減、根拠）が返ることを確認する。
-
-![day2 teams chat test 01](images/day2-teams-chat-test-01.png)
-
-### 補足
-
-- 本ハンズオンの Day2 は、Foundry から Fabric Data Agent を利用する流れに限定する。
-- 旧手順書の `TodoManagement` / `Azure Cosmos DB` / `MCP Toolkit` 系手順は対象外。
-- ポータル UI 名称が異なる場合は、`Agent` / `Tools` / `Fabric Data Agent` / `Teams` のキーワードで同等機能を探す。
 
 以上、お疲れさまでした。

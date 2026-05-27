@@ -17,7 +17,6 @@
 - Day1 で作成した Fabric Data Agent を Foundry Agent から呼び出せるようにする。
 - Agent を Teams に公開し、Teams から問い合わせできるようにする。
 
-![day2 overview 01](images/day2-overview-01.png)
 
 ### 事前確認
 
@@ -86,6 +85,22 @@ Azure portal で Foundry リソースを作成する（既存がある場合は�
    **プレイグラウンド** に次のメッセージを入力します。ツール呼び出しの承認を求められたら許可します。
    `Emploee 毎のProfitの合計を年毎に出して`
    ![Chat result response](image/day2-hands-on-foundry/agent-chat-response.png)
+
+### Web検索機能を追加する
+
+1. **ツール**:
+   1. **Web search** ツールを追加します
+   ![web検索ツール追加](image/day2-hands-on-foundry/add-web-tool.png)
+   2. Web Search ツールの追加画面で ** Bing 検索で Web を検索する** がチェックされていることを確認して追加
+   ![web検索ツール追加](image/day2-hands-on-foundry/web-tool-config.png)
+2. **手順**に下記の一文を追加
+```text
+業務データが見当たらない情報はWeb検索を利用して回答しなさい。
+```
+3. Agent をテストする。
+   **プレイグラウンド** に次のメッセージを入力します。ツール呼び出しの承認を求められたら許可します。
+   `2016年に最も売り上げが大きなCityを特定して、また、そのCityの人口増加傾向を調べて？`
+   ![統合された回答](image/day2-hands-on-foundry/agent-unified-answer.png)
 
 ### Agent を公開する
 

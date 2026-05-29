@@ -71,7 +71,7 @@
 
 > ※ 当ハンズオンはすべてのネットワークからの接続を有効にして行うが、実際のプロジェクトにおいては、セキュリティを考慮したネットワーク設定が必要となるので注意する。
 
-5. Blob Storage の **ストレージ ブラウザー** を開き、作成されている `salescontainer` にコーチから配布された `fact\_sale.parquet`, `pdpv2db.bacpac` ファイルをアップロードする。
+5. Blob Storage の **ストレージ ブラウザー** を開き、作成されている `salescontainer` にコーチから配布された `fact_sale.parquet`, `pdpv2db.bacpac` ファイルをアップロードする。
    ![Upload files](image/day1-hands-on-fabric/sa-upload-files.png)
 6. （当ハンズオン参加者が自身の容量を必要とする場合）次の内容でFabric 容量のリソースを作成する。
 
@@ -297,7 +297,7 @@ S3 = DTU 100 : 12 分 ～ 15 分
     > ※ データコピーが終了したときに、状態が [成功] となれば正常終了となる。
     > ![check copy job result](image/day1-hands-on-fabric/copy-job-check-result.png)
     >
-20. [pdpv2dwh＜No＞] を開き、画面左のエクスプローラーで [Fact_Sale] テーブルをクリックするとデータのプレビューに取り込んだデータが表示されることを確認する。
+20. [pdpv2dwh＜No＞] を開き、画面左のエクスプローラーで [Fact\_Sale] テーブルをクリックするとデータのプレビューに取り込んだデータが表示されることを確認する。
 
 ![open table Fact_Sale](image/day1-hands-on-fabric/open-face-sale-table.png)
 

@@ -559,11 +559,11 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 20. [フィールド] を開き、次の内容にチェックを入れ、[追加] をクリックする。
 
 ```
-"Date", "Day\_Number", "Day", "Month", "Short\_Month", "Calendar\_Month\_Number", "Calendar\_Month\_Label",
+"Date", "Day_Number", "Day", "Month", "Short_Month", "Calendar_Month_Number", "Calendar_Month_Label",
 
-"Calendar\_Year", "Calendar\_Year\_Label", "Fiscal\_Month\_Number", "Fiscal\_Month\_Label", "Fiscal\_Year",
+"Calendar_Year", "Calendar_Year_Label", "Fiscal_Month_Number", "Fiscal_Month_Label", "Fiscal_Year",
 
-"Fiscal\_Year\_Label", "ISO\_Week\_Number", "Days\_of\_Week", "Holiday", "Holiday\_Name"
+"Fiscal_Year_Label", "ISO_Week_Number", "Days_of_Week", "Holiday", "Holiday_Name"
 ```
 
 > ※ 全 17 項目で、[EventProcessedUtcTime], [PartitionId], [EventEnqueuedUtcTime] の 3 項目以外すべての項目にチェックを入れる。

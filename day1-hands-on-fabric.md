@@ -71,7 +71,7 @@
 
 > ※ 当ハンズオンはすべてのネットワークからの接続を有効にして行うが、実際のプロジェクトにおいては、セキュリティを考慮したネットワーク設定が必要となるので注意する。
 
-5. Blob Storage の **ストレージ ブラウザー** を開き、作成されている `salescontainer` にコーチから配布された `fact_sale.parquet`, `pdpv2db.bacpac` ファイルをアップロードする。
+5. Blob Storage の **ストレージ ブラウザー** を開き、作成されている `salescontainer` にコーチから配布された `fact\_sale.parquet`, `pdpv2db.bacpac` ファイルをアップロードする。
    ![Upload files](image/day1-hands-on-fabric/sa-upload-files.png)
 6. （当ハンズオン参加者が自身の容量を必要とする場合）次の内容でFabric 容量のリソースを作成する。
 
@@ -229,7 +229,7 @@ S3 = DTU 100 : 12 分 ～ 15 分
    ![create shortcut blobstorage container](image/day1-hands-on-fabric/create-shortcut-blobstorage-container.png)
 8. [変換] で [スキップ] をクリックする。
 9. [新しいショートカット] で設定した内容を確認し、[作成] をクリックする。
-10. [pdpv2lakehouse＜No＞] の [エクスプローラー] で [pdpv2lakehouse＜No＞] - [Files] - [salescontainer] を選択し、[fact_sale.parquet], [pdpv2db.bacpac] ファイルが見えることを確認する。
+10. [pdpv2lakehouse＜No＞] の [エクスプローラー] で [pdpv2lakehouse＜No＞] - [Files] - [salescontainer] を選択し、[fact\_sale.parquet], [pdpv2db.bacpac] ファイルが見えることを確認する。
     ![create shortcut blobstorage select files](image/day1-hands-on-fabric/create-shortcut-blobstorage-select-files.png)
 11. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 12. [＋新しい項目] をクリックし、次の内容で [ウェアハウス] を作成する。

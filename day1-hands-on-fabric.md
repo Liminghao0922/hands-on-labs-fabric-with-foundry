@@ -116,7 +116,7 @@ az sql server create --name $server --resource-group "dpv2handson＜No＞" --loc
 
 | 属性                     | 値       |
 | ------------------------ | -------- |
-| データベース名           | aidatadbpdpv2db |
+| データベース名           | pdpv2db |
 | エディション             | Standard |
 | データベースの最大サイズ | 10GB     |
 | サービスの目標           | S3       |
@@ -128,7 +128,7 @@ az sql server create --name $server --resource-group "dpv2handson＜No＞" --loc
 
 | 属性               | 値       |
 | ------------------ | -------- |
-| データベース名     | aidatadbpdpv2db |
+| データベース名     | pdpv2db |
 | サービスレベル     | Standard |
 | DTU                | 100      |
 | データの最大サイズ | 10GB     |

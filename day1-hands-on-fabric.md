@@ -1,4 +1,4 @@
-# Fabric AI Ready Data Day1 ハンズオン手順
+# Fabric AI Ready Data Day1 ハンズオン手順（PDP v2 版）
 
 ## 目次
 
@@ -39,12 +39,12 @@
 本手順では次のファイルを使用する。
 
 - [fact\_sale.parquet]
-- [aidatadb.bacpac]
+- [pdpv2db.bacpac]
 
 これらのファイルはコーチより受け取り、各自端末の任意のフォルダにコピーしておく。
 
 1. Azure ポータルにログインして、次の名前でリソースグループを作成する。
-   `rg-aidatahandson＜No＞`
+   `pdpv2handson＜No＞`
 2. ブラウザで新しいタブを開き、次の URL に接続する。
    [https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-sdk-for-net%2Fmain%2Fsdk%2Feventhub%2FAzure.Messaging.EventHubs.Processor%2Fassets%2Fsamples-azure-deploy.json](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-sdk-for-net%2Fmain%2Fsdk%2Feventhub%2FAzure.Messaging.EventHubs.Processor%2Fassets%2Fsamples-azure-deploy.json)
    > ※ ログインが求められる場合は、当ハンズオン用のテナントで自身に割り当てられたアカウントでログインする。
@@ -55,11 +55,11 @@
 　| 属性 | 値 |
 | --- | --- |
 | サブスクリプション | 当ハンズオン用に割り当てられたサブスクリプション |
-| リソース グループ | 当該手順 1. で作成したものを選択（aidatahandson＜No＞） |
+| リソース グループ | 当該手順 1. で作成したものを選択（pdpv2handson＜No＞） |
 | リージョン | Japan East |
-| Namespace Name | aidataeventhubnamespace＜No＞ |
-| Event Hub Name | aidataeventhubname＜No＞ |
-| Storage Account Name | aidatastorage＜No＞ |
+| Namespace Name | pdpv2eventhubnamespace＜No＞ |
+| Event Hub Name | pdpv2eventhubname＜No＞ |
+| Storage Account Name | pdpv2storage＜No＞ |
 | Blob Container Name | salescontainer |
 
 ![Deploy template](image/day1-hands-on-fabric/deploy-template.png)
@@ -71,7 +71,7 @@
 
 > ※ 当ハンズオンはすべてのネットワークからの接続を有効にして行うが、実際のプロジェクトにおいては、セキュリティを考慮したネットワーク設定が必要となるので注意する。
 
-5. Blob Storage の **ストレージ ブラウザー** を開き、作成されている `salescontainer` にコーチから配布された `fact_sale.parquet`, `aidatadb.bacpac` ファイルをアップロードする。
+5. Blob Storage の **ストレージ ブラウザー** を開き、作成されている `salescontainer` にコーチから配布された `fact_sale.parquet`, `pdpv2db.bacpac` ファイルをアップロードする。
    ![Upload files](image/day1-hands-on-fabric/sa-upload-files.png)
 6. （当ハンズオン参加者が自身の容量を必要とする場合）次の内容でFabric 容量のリソースを作成する。
 
@@ -79,8 +79,8 @@
 | 属性               | 値                                                                   |
 | ------------------ | -------------------------------------------------------------------- |
 | サブスクリプション | 当ハンズオン用に割り当てられたサブスクリプション                     |
-| リソース グループ  | 当該手順 1. で作成したものを選択（aidatahandson＜No＞）              |
-| 容量の名前         | aidatafabricsku＜No＞                                                |
+| リソース グループ  | 当該手順 1. で作成したものを選択（pdpv2handson＜No＞）              |
+| 容量の名前         | pdpv2fabricsku＜No＞                                                |
 | リージョン         | Japan East                                                           |
 | サイズ             | ＜コーチより指示＞                                                   |
 | 容量管理者         | ＜Fabric の容量管理者となる Entra ID アカウント名(@ドメイン名含む)＞ |
@@ -93,10 +93,10 @@
 
 ```bash
 az account set --subscription "＜サブスクリプション名＞"
-server="aidatasqldbserver＜No＞"
+server="pdpv2sqldbserver＜No＞"
 adminuser="＜SQL Database のサーバー管理者となる Entra ID アカウント名(@ドメイン名含む)＞"
 adminsid="＜adminuser のオブジェクト ID＞"
-az sql server create --name $server --resource-group "rgaidatahandson＜No＞" --location "japaneast" --enable-ad-only-auth --external-admin-principal-type User --external-admin-name $adminuser --external-admin-sid $adminsid
+az sql server create --name $server --resource-group "dpv2handson＜No＞" --location "japaneast" --enable-ad-only-auth --external-admin-principal-type User --external-admin-name $adminuser --external-admin-sid $adminsid
 ```
 
 > ※ ＜＞内は自身の環境に応じて適宜書き換える。
@@ -111,12 +111,12 @@ az sql server create --name $server --resource-group "rgaidatahandson＜No＞" -
 
 > ※ 当ハンズオンはすべてのネットワークからの接続を有効にして行うが、実際のプロジェクトにおいては、セキュリティを考慮したネットワーク設定が必要となるので注意する。
 
-9. コーチから配布された [aidatadb.bacpac] ファイルを用い、データベースをインポートする。
+9. コーチから配布された [pdpv2db.bacpac] ファイルを用い、データベースをインポートする。
 
 
 | 属性                     | 値       |
 | ------------------------ | -------- |
-| データベース名           | aidatadb |
+| データベース名           | aidatadbpdpv2db |
 | エディション             | Standard |
 | データベースの最大サイズ | 10GB     |
 | サービスの目標           | S3       |
@@ -128,7 +128,7 @@ az sql server create --name $server --resource-group "rgaidatahandson＜No＞" -
 
 | 属性               | 値       |
 | ------------------ | -------- |
-| データベース名     | aidatadb |
+| データベース名     | aidatadbpdpv2db |
 | サービスレベル     | Standard |
 | DTU                | 100      |
 | データの最大サイズ | 10GB     |
@@ -165,9 +165,9 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 | 属性                 | 値                                                                              |
 | -------------------- | ------------------------------------------------------------------------------- |
-| 名前                 | aidataws＜No＞                                                                  |
+| 名前                 | pdpv2ws＜No＞                                                                  |
 | ワークスペースの種類 | Fabric                                                                          |
-| 詳細                 | 前章 [I.事前準備 1 Azure] で作成した Fabric 容量を選択（aidatafabricsku＜No＞） |
+| 詳細                 | 前章 [I.事前準備 1 Azure] で作成した Fabric 容量を選択（pdpv2fabricsku＜No＞） |
 
 > ※ ＜＞内は自身の環境に応じて適宜書き換える。
 
@@ -200,11 +200,11 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 | 属性                 | 値                                           |
 | -------------------- | -------------------------------------------- |
-| 名前                 | aidatalakehouse＜No＞                        |
+| 名前                 | pdpv2lakehouse＜No＞                        |
 | 場所                 | 自身が作業を行っているワークスペース名を指定 |
 | レイクハウススキーマ | チェックを外す                               |
 
-3. [aidatalakehouse＜No＞] が自動で開くので、画面左側の [エクスプローラー] で、[Files]をクリックする。
+3. [pdpv2lakehouse＜No＞] が自動で開くので、画面左側の [エクスプローラー] で、[Files]をクリックする。
 4. [Files] の […] をクリックし、プルダウンメニューから[新しいショートカット]をクリックする。
 
 ![create shortcut](image/day1-hands-on-fabric/create-shortcut.png)
@@ -215,8 +215,8 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 | 属性                   | 値                                                 |
 | ---------------------- | -------------------------------------------------- |
-| アカウント名または URL | https://aidatastorage＜No＞.blob.core.windows.net/ |
-| 接続名                 | aidatastorage＜No＞                                |
+| アカウント名または URL | https://pdpv2storage＜No＞.blob.core.windows.net/ |
+| 接続名                 | pdpv2storage＜No＞                                |
 | 認証の種類             | 組織アカウント                                     |
 
 ![create shortcut](image/day1-hands-on-fabric/create-shortcut-blobstorage-connection.png)
@@ -229,9 +229,9 @@ S3 = DTU 100 : 12 分 ～ 15 分
    ![create shortcut blobstorage container](image/day1-hands-on-fabric/create-shortcut-blobstorage-container.png)
 8. [変換] で [スキップ] をクリックする。
 9. [新しいショートカット] で設定した内容を確認し、[作成] をクリックする。
-10. [aidatalakehouse＜No＞] の [エクスプローラー] で [aidatalakehouse＜No＞] - [Files] - [salescontainer] を選択し、[fact\_sale.parquet], [aidatadb.bacpac] ファイルが見えることを確認する。
+10. [pdpv2lakehouse＜No＞] の [エクスプローラー] で [pdpv2lakehouse＜No＞] - [Files] - [salescontainer] を選択し、[fact_sale.parquet], [pdpv2db.bacpac] ファイルが見えることを確認する。
     ![create shortcut blobstorage select files](image/day1-hands-on-fabric/create-shortcut-blobstorage-select-files.png)
-11. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+11. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 12. [＋新しい項目] をクリックし、次の内容で [ウェアハウス] を作成する。
 
 ![create warehouse](image/day1-hands-on-fabric/create-warehouse.png)
@@ -241,9 +241,9 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 | 属性 | 値              |
 | ---- | --------------- |
-| 名前 | aidatadwh＜No＞ |
+| 名前 | pdpv2dwh＜No＞ |
 
-13. [aidatadwh＜No＞] が自動で開くので、画面上部のメニューから[新規 SQL クエリ]―＞[新規 SQL クエリ]をクリックする。
+13. [pdpv2dwh＜No＞] が自動で開くので、画面上部のメニューから[新規 SQL クエリ]―＞[新規 SQL クエリ]をクリックする。
 
 ![new sql query](image/day1-hands-on-fabric/new-sql-query.png)
 
@@ -255,11 +255,11 @@ S3 = DTU 100 : 12 分 ～ 15 分
 > ※ クエリの一部が選択された状態になっていないことを確認して実行する。一部が選択された状態だと、選択された部分のみ実行がかかり、エラーの原因となる。
 > ※ 実行後、クエリエディタの下部にメッセージが表示されるのでエラーが出ていないことを確認する。
 
-16. [エクスプローラー] で [aidatadwh＜No＞] - [Schemas] - [dbo] - [Tables]を展開して、[Fact\_Sale] テーブルが作成されていることを確認する。
+16. [エクスプローラー] で [pdpv2dwh＜No＞] - [Schemas] - [dbo] - [Tables]を展開して、[Fact\_Sale] テーブルが作成されていることを確認する。
 
 ![check table creation](image/day1-hands-on-fabric/check-table-creation.png)
 
-17. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+17. Fabric ポータル左のナビゲーションバーで [pdpv2dwh＜No＞] のワークスペースをクリックする。
 18. [＋新しい項目] をクリックし、次の内容で [コピージョブ] を作成する。
 
 ![check table creation](image/day1-hands-on-fabric/create-copy-job.png)
@@ -275,13 +275,13 @@ S3 = DTU 100 : 12 分 ～ 15 分
 19. コピージョブのウィザードを次の内容で進める。
 
     1. データソースの選択
-       [aidatalakehouse＜No＞] を選択
+       [pdpv2lakehouse＜No＞] を選択
        ![select data source](image/day1-hands-on-fabric/copy-job-select-data-source.png)
     2. データの選択
-       [ファイル] をチェック -> [fact\_sale.parquet] をチェック
+       [ファイル] をチェック -> [fact_sale.parquet] をチェック
        ![select data](image/day1-hands-on-fabric/copy-job-select-data.png)
     3. データ変換先の選択
-       [aidatadwh＜No＞] を選択
+       [pdpv2dwh＜No＞] を選択
        ![select destination](image/day1-hands-on-fabric/copy-job-select-destination.png)
     4. 設定
        [完全なコピー] を選択
@@ -297,7 +297,7 @@ S3 = DTU 100 : 12 分 ～ 15 分
     > ※ データコピーが終了したときに、状態が [成功] となれば正常終了となる。
     > ![check copy job result](image/day1-hands-on-fabric/copy-job-check-result.png)
     >
-20. [aidatadwh＜No＞] を開き、画面左のエクスプローラーで [Fact\_Sale] テーブルをクリックするとデータのプレビューに取り込んだデータが表示されることを確認する。
+20. [pdpv2dwh＜No＞] を開き、画面左のエクスプローラーで [Fact_Sale] テーブルをクリックするとデータのプレビューに取り込んだデータが表示されることを確認する。
 
 ![open table Fact_Sale](image/day1-hands-on-fabric/open-face-sale-table.png)
 
@@ -307,7 +307,7 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 本手順は SQL Database のミラーリング設定を行い、パイプラインで SQL Database 上のストアドプロシージャを実行することで、データがミラーリングされて来ることを確認する。
 
-1. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+1. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 2. [＋新しい項目] をクリックし、次の内容で [ミラー化された Azure SQL Database] を作成する。
 
 ![create sql datbase mirroring](image/day1-hands-on-fabric/create-sql-db-micrroring.png)
@@ -320,9 +320,9 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 | 属性         | 値                                           |
 | ------------ | -------------------------------------------- |
-| サーバー     | aidatasqldbserver＜No＞.database.windows.net |
-| データベース | aidatadb                                     |
-| 接続名       | aidatasqldbserver＜No＞;aidatadb             |
+| サーバー     | pdpv2sqldbserver＜No＞.database.windows.net |
+| データベース | pdpv2db                                     |
+| 接続名       | pdpv2sqldbserver＜No＞;pdpv2db             |
 | 認証の種類   | 組織アカウント                               |
 
 ![create sql datbase mirroring settings](image/day1-hands-on-fabric/create-sql-db-micrroring-settings.png)
@@ -342,18 +342,18 @@ S3 = DTU 100 : 12 分 ～ 15 分
 > ![sql datbase mirroring select tables](image/day1-hands-on-fabric/sql-db-micrroring-select-tables.png)
 
 3. 宛先
-   `aidatadb`
+   `pdpv2db`
 
 > ※ 名前が誤っていないことを確認し、[ミラー化されたデータベースを作成する] をクリックする。
 > ![sql datbase mirroring select database](image/day1-hands-on-fabric/sql-db-micrroring-select-database.png)
 
-3. [aidatadb] が自動で開くので、画面中央の [レプリケーションの監視] で [最新の情報に更新] をクリックして 4 つのすべてのテーブルの状態が [実行中] となっていることを確認する。
+3. [pdpv2db] が自動で開くので、画面中央の [レプリケーションの監視] で [最新の情報に更新] をクリックして 4 つのすべてのテーブルの状態が [実行中] となっていることを確認する。
    ![sql datbase mirroring check replication status](image/day1-hands-on-fabric/sql-db-micrroring-check-replication-status.png)
 
 > ※ 当該テーブルにはまだデータが入っていないため、[レプリケートされた行] は、[0] となっている。
 > ※ この段階では、いずれのテーブルにもデータがまだレプリケートされていないため、[エクスプローラー] でテーブルをクリックしてもデータは表示されない。
 
-4. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+4. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 5. [＋新しい項目] をクリックし、次の内容で [パイプライン] を作成する。
 
 ![create-pipeline](image/day1-hands-on-fabric/create-pipeline.png)
@@ -364,7 +364,7 @@ S3 = DTU 100 : 12 分 ～ 15 分
 | 属性 | 値                   |
 | ---- | -------------------- |
 | 名前 | sqldbdimupdate＜No＞ |
-| 場所 | aidataws＜No＞       |
+| 場所 | pdpv2ws＜No＞       |
 
 6. [sqldbdimupdate＜No＞] が自動で開くので、メニューの [アクティビティ] を開き、[スクリプト] をクリックする。
 
@@ -379,8 +379,8 @@ S3 = DTU 100 : 12 分 ～ 15 分
 
 | 属性                   | 値                                                      |
 | ---------------------- | ------------------------------------------------------- |
-| 接続                   | aidatasqldbserver＜No＞;aidatadb                        |
-| データベース           | aidatadb                                                |
+| 接続                   | pdpv2sqldbserver＜No＞;pdpv2db                        |
+| データベース           | pdpv2db                                                |
 | スクリプト             | NonQuery を選択。枠内は後続の内容をコピー＆ペーストする |
 | スクリプトのパラメータ | [新規] を 2 回クリックし、次のパラメータを追加する      |
 
@@ -412,7 +412,7 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
 ![check pipeline execution result](image/day1-hands-on-fabric/check-pipeline-execution-result.png)
 
-11. [aidatadb] を開き、画面中央の [レプリケーションの監視] で [最新の情報に更新] をクリックして 4 つのテーブルの [レプリケートされた行] が次のとおりとなっていることを確認する。
+11. [pdpv2db] を開き、画面中央の [レプリケーションの監視] で [最新の情報に更新] をクリックして 4 つのテーブルの [レプリケートされた行] が次のとおりとなっていることを確認する。
 
 
 | Table                              | Count  |
@@ -441,14 +441,14 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
 これらのファイルはコーチより受け取り、各自端末の任意のフォルダにコピーしておく。
 
-1. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+1. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 2. [＋新しい項目] をクリックし、次の内容で [イベントハウス] を作成する。
 
 ![create event house](image/day1-hands-on-fabric/create-event-house.png)
 
 > ※ 新しい項目は、カテゴリで [データの保管] - [イベントハウス] を指定する。
 
-名前　：　aidataeventhouse＜No＞
+名前　：　pdpv2eventhouse＜No＞
 
 > ※ イベントハウスを作成する時は下記メッセージが表示されるが、イベントハウスの簡単な説明であるためそのまま [Get Started] をクリックする。
 
@@ -456,7 +456,7 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
 > ※ アイテムを作成したときにポップアップで操作手順が表示されることがあるが、気にせず本書の手順に沿った作業を進める。
 
-3. [aidataeventhouse＜No＞] が自動で開くので、画面左側の [KQL データベース] で [aidataeventhouse＜No＞] をクリックする
+3. [pdpv2eventhouse＜No＞] が自動で開くので、画面左側の [KQL データベース] で [pdpv2eventhouse＜No＞] をクリックする
 
 ![event house select database](image/day1-hands-on-fabric/event-house-select-db.png)
 
@@ -468,16 +468,16 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 > ※ 1, 2 分して [Availability] がオンになることを確認する。
 > ※ この段階では、まだテーブルを作成しておらず、データも取り込んでいないため、対象テーブル、サイズ共に [0B] となっている。
 
-5. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+5. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 6. [＋新しい項目] をクリックし、次の内容で [Eventstream] を作成する。
 
 ![create event stream](image/day1-hands-on-fabric/create-event-stream.png)
 
 > ※ 新しい項目は、カテゴリで [データを取得] - [Eventstream] を指定する。
 
-名前　：　aidataeventstream＜No＞
+名前　：　pdpv2eventstream＜No＞
 
-7. [aidataeventstream＜No＞] が自動で開くので、画面中央の [データソースの接続] をクリックする。
+7. [pdpv2eventstream＜No＞] が自動で開くので、画面中央の [データソースの接続] をクリックする。
 
 ![event stream select datasource](image/day1-hands-on-fabric/event-stream-select-datasource.png)
 
@@ -496,9 +496,9 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
    | 属性                   | 値                                                |
    | ---------------------- | ------------------------------------------------- |
-   | イベントハブの名前空間 | aidataeventhubnamespace＜No＞                     |
-   | イベントハブ           | aidataeventhubname＜No＞                          |
-   | 接続名                 | aidataeventhubconnecter＜No＞                     |
+   | イベントハブの名前空間 | pdpv2eventhubnamespace＜No＞                     |
+   | イベントハブ           | pdpv2eventhubname＜No＞                          |
+   | 接続名                 | pdpv2eventhubconnecter＜No＞                     |
    | 認証の種類             | 基本                                              |
    | ユーザー名             | ＜Event Hubs の共有アクセスポリシーのポリシー名＞ |
    | パスワード             | ＜Event Hubs の共有アクセスポリシーの主キー＞     |
@@ -517,13 +517,13 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
       自動でスキップされる。
    4. 確認及び接続
       [追加] をクリック
-10. [aidataeventstream＜No＞] に戻るので、画面下部の [作成エラー] を開き、エラーが出ていないことを確認する。
+10. [pdpv2eventstream＜No＞] に戻るので、画面下部の [作成エラー] を開き、エラーが出ていないことを確認する。
 
 ![event stream check error](image/day1-hands-on-fabric/eventstream-check-error.png)
 
 11. ブラウザで新しいタブを開き、Azure ポータルにログインする。
-12. [aidataeventhubnamespace＜No＞] を開き、[エンティティ] - [Event Hubs] - [aidataeventhubname＜No＞] のリンクをクリックする。
-13. [aidataeventhubname＜No＞] の [Data Explorer] を開き、[イベントの送信] をクリックする。
+12. [pdpv2eventhubnamespace＜No＞] を開き、[エンティティ] - [Event Hubs] - [pdpv2eventhubname＜No＞] のリンクをクリックする。
+13. [pdpv2eventhubname＜No＞] の [Data Explorer] を開き、[イベントの送信] をクリックする。
 
 ![event hub send event](image/day1-hands-on-fabric/event-hub-send-event.png)
 
@@ -535,7 +535,7 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
 ![check portal notification](image/day1-hands-on-fabric/portal-check-notification.png)
 
-16. ブラウザで、Fabric ポータルで [aidataeventstream＜No＞] に戻り、[データプレビュー] をクリックし、[最新の情報] をクリックする。
+16. ブラウザで、Fabric ポータルで [pdpv2eventstream＜No＞] に戻り、[データプレビュー] をクリックし、[最新の情報] をクリックする。
 
 ![check latest event stream data](image/day1-hands-on-fabric/eventstream-check-latest-data.png)
 
@@ -591,16 +591,16 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
 | 属性               | 値                                                     |
 | ------------------ | ------------------------------------------------------ |
-| ワークスペース名   | aidataws＜No＞                                         |
-| イベントハウス     | aidataeventhouse＜No＞                                 |
-| KQL データベース   | aidataeventhouse＜No＞                                 |
+| ワークスペース名   | pdpv2ws＜No＞                                         |
+| イベントハウス     | pdpv2eventhouse＜No＞                                 |
+| KQL データベース   | pdpv2eventhouse＜No＞                                 |
 | KQL 変換先テーブル | [新規作成] のリンクをクリックして、[calendar] 名で作成 |
 
 > ※ 記載のないパラメータは既定値を使用する。
 
 ![eventhouse create new](image/day1-hands-on-fabric/eventhouse-create-new.png)
 
-26. [aidataeventstream＜No＞] の画面右上にある [発行] をクリックする。
+26. [pdpv2eventstream＜No＞] の画面右上にある [発行] をクリックする。
 
 ![pipeline publish](image/day1-hands-on-fabric/pipeline-publish.png)
 
@@ -617,18 +617,18 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
 ※ 重複して送信すると、セマンティックモデル作成時にデータ不整合でエラーが生じるため注意する。
 
-28. ブラウザで、Fabric ポータルに戻り [aidataeventstream＜No＞] の画面下部に表示されている [最新の情報] をクリックして、画面下部にデータがプレビューされることを確認する。
+28. ブラウザで、Fabric ポータルに戻り [pdpv2eventstream＜No＞] の画面下部に表示されている [最新の情報] をクリックして、画面下部にデータがプレビューされることを確認する。
 
 ![eventstream data preview](image/day1-hands-on-fabric/eventstream-data-preview.png)
 
-29. [aidataeventhouse＜No＞] を開き、画面左の [KQL データベース] - [aidataeventhouse＜No＞] - [Tables] - [calendar] を選択し、テーブルが作成され、データが挿入されていることを確認する。
+29. [pdpv2eventhouse＜No＞] を開き、画面左の [KQL データベース] - [pdpv2eventhouse＜No＞] - [Tables] - [calendar] を選択し、テーブルが作成され、データが挿入されていることを確認する。
 
 ![check calendar result](image/day1-hands-on-fabric/check-calendar-result.png)
 
-> ※ [KQL データベース] - [aidataeventhouse＜No＞] をクリックすると、自動でブラウザの新しいタブが開き、[データベース] といったタブが追加された画面が表示される。
+> ※ [KQL データベース] - [pdpv2eventhouse＜No＞] をクリックすると、自動でブラウザの新しいタブが開き、[データベース] といったタブが追加された画面が表示される。
 > ※ [calendar] の内容が表示されない場合は、メニューにある更新ボタンをクリックする。
 
-30. [KQL データベース] - [aidataeventhouse＜No＞] - [aidataeventhouse＜No＞\_queryset] を選択し、記載内容をすべて消し、次の内容に変更した上で、それぞれ実行する。
+30. [KQL データベース] - [pdpv2eventhouse＜No＞] - [pdpv2eventhouse＜No＞\_queryset] を選択し、記載内容をすべて消し、次の内容に変更した上で、それぞれ実行する。
 
 ```
 calendar
@@ -644,7 +644,7 @@ calendar
 > ※ 後ろ 1 行を選択して実行すると、次の内容が返ってくる。
 > ![check kql result](image/day1-hands-on-fabric/check-kql-result-02.png)
 
-31. [aidatalakehouse＜No＞] を開き、エクスプローラーで [aidatalakehouse＜No＞] - [Tables] の […] をクリックし、プルダウンメニューから [新しいショートカット] をクリックする。
+31. [pdpv2eventhouse＜No＞] を開き、エクスプローラーで [pdpv2eventhouse＜No＞] - [Tables] の […] をクリックし、プルダウンメニューから [新しいショートカット] をクリックする。
 
 ![create lackhouse new shortcut](image/day1-hands-on-fabric/lackhouse-new-shortcut.png)
 
@@ -652,11 +652,11 @@ calendar
 
 ![create lackhouse new shortcut for onelake](image/day1-hands-on-fabric/lackhouse-new-shortcut-onelake.png)
 
-33. [データソースの種類を選択] で、[aidataeventhouse＜No＞] を選択し、[次へ] をクリックする。
+33. [データソースの種類を選択] で、[pdpv2eventhouse＜No＞] を選択し、[次へ] をクリックする。
 
 ![create lackhouse new shortcut for onelake](image/day1-hands-on-fabric/lackhouse-new-shortcut-select-datasource.png)
 
-34. [新しいショートカット] で [aidataeventhouse＜No＞] - [Tables] - [calendar] にチェックを入れ、[次へ] をクリックする。
+34. [新しいショートカット] で [pdpv2eventhouse＜No＞] - [Tables] - [calendar] にチェックを入れ、[次へ] をクリックする。
 
 ![check calendar](image/day1-hands-on-fabric/lackhouse-new-shortcut-check-calendar.png)
 
@@ -664,7 +664,7 @@ calendar
 
 ![create confirm](image/day1-hands-on-fabric/lackhouse-new-shortcut-onelake-create.png)
 
-36. エクスプローラーで [aidatalakehouse＜No＞] - [Tables] 配下に [calendar] テーブルのショートカットが作成されており、データが参照できることを確認する。
+36. エクスプローラーで [pdpv2lakehouse＜No＞] - [Tables] 配下に [calendar] テーブルのショートカットが作成されており、データが参照できることを確認する。
 
 ![confirm calendar data](image/day1-hands-on-fabric/confirm-calendar-data.png)
 
@@ -674,7 +674,7 @@ calendar
 
 なお、本手順は Power BI Pro ライセンスが必要となる点に注意する。
 
-1. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+1. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 2. [＋新しい項目] をクリックし、次の内容で [セマンティックモデル] を作成する。
 
 ![create semantic model](image/day1-hands-on-fabric/create-semantic-model.png)
@@ -685,7 +685,7 @@ calendar
 
 ![select onelake catelog](image/day1-hands-on-fabric/select-onelake-catelog.png)
 
-4. [aidatalakehouse＜No＞] を選択し、[接続] をクリックする。
+4. [pdpv2lakehouse＜No＞] を選択し、[接続] をクリックする。
 
 ![select aidatalakehouse](image/day1-hands-on-fabric/select-aidatalakehouse.png)
 
@@ -694,8 +694,8 @@ calendar
 
 | 属性                                                        | 値                              |
 | ----------------------------------------------------------- | ------------------------------- |
-| Direct Lake セマンティック モデル名                         | aidatasemantic＜No＞            |
-| ワークスペース                                              | aidataws＜No＞                  |
+| Direct Lake セマンティック モデル名                         | pdpv2semantic＜No＞            |
+| ワークスペース                                              | pdpv2ws＜No＞                  |
 | セマンティック モデルのテーブルを選択または選択解除します。 | [calendar] にチェックを入れる。 |
 
 ![select aidatalakehouse table](image/day1-hands-on-fabric/select-aidatalakehouse-table.png)
@@ -706,7 +706,7 @@ calendar
 
 ![select onelake catelog](image/day1-hands-on-fabric/home-select-onelake-catelog.png)
 
-7. [aidatadwh＜No＞] を選択し、[接続] をクリックする。
+7. [pdpv2dwh＜No＞] を選択し、[接続] をクリックする。
 
 ![select aidatadwh](image/day1-hands-on-fabric/select-aidatadwh.png)
 
@@ -718,7 +718,7 @@ calendar
 
 ![select onelake catelog](image/day1-hands-on-fabric/home-select-onelake-catelog-02.png)
 
-10. [aidatadb] を選択し、[接続] をクリックする。
+10. [pdpv2db] を選択し、[接続] をクリックする。
 
 ![connect aidatadb](image/day1-hands-on-fabric/connect-aidatadb.png)
 
@@ -776,9 +776,9 @@ calendar
 
 | 属性 | 値                   |
 | ---- | -------------------- |
-| 名前 | aidataontology＜No＞ |
+| 名前 | pdpv2ontology＜No＞ |
 
-19. [aidataontology＜No＞] が自動で開くので、画面左の [エクスプローラー] で [Fact_Sale] をクリックする。
+19. [pdpv2ontology＜No＞] が自動で開くので、画面左の [エクスプローラー] で [Fact_Sale] をクリックする。
 
 ![Ontology Fact_Sale](image/day1-hands-on-fabric/ontology-fact_sale.png)
 
@@ -786,7 +786,7 @@ calendar
 > ※ 本機能は現在プレビューとなっているため、この後では利用しない。
 > ※ オントロジーを作成する際に [Ontology へようこそ] が表示されることがあるが、再度表示させたくない場合は [今後表示しない] にチェックを入れ画面を閉じる。
 
-20. Fabric ポータル左のナビゲーションバーで [aidataws＜No＞] のワークスペースをクリックする。
+20. Fabric ポータル左のナビゲーションバーで [pdpv2ws＜No＞] のワークスペースをクリックする。
 21. [＋新しい項目] をクリックし、次の内容で [データエージェント] を作成する。
 
 ![Create data agent](image/day1-hands-on-fabric/create-data-agent.png)
@@ -796,21 +796,21 @@ calendar
 
 | 属性 | 値                    |
 | ---- | --------------------- |
-| 名前 | aidatadataagent＜No＞ |
+| 名前 | pdpv2dataagent＜No＞ |
 
 ※ Fabric 試用版容量ではデータエージェントが作成できない。
 
-22. [aidatadataagent＜No＞] が自動で開くので、画面中央の [データソースの追加] をクリックする。
+22. [pdpv2dataagent＜No＞] が自動で開くので、画面中央の [データソースの追加] をクリックする。
 
 ![Create data source for data agent](image/day1-hands-on-fabric/data-agent-add-data-source.png)
 
-23. [データソースの追加] で [aidatasemantic＜No＞] を選択し、[追加] をクリックする。
+23. [データソースの追加] で [pdpv2semantic＜No＞] を選択し、[追加] をクリックする。
 
 ![add semantic model for data agent](image/day1-hands-on-fabric/data-agent-add-semantic-model.png)
 
 > ※ ここで先に作成したオントロジーを選択すると、エージェントがエンティティ間の関係性を考慮した回答を返すことができるようになる。但し、現在プレビューの機能であるため今回のハンズオンでは使用していない。
 
-24. データとして [aidatasemantic＜No＞] が追加されていることを確認し、[エクスプローラー] ですべてのテーブルにチェックを入れる。
+24. データとして [pdpv2semantic＜No＞] が追加されていることを確認し、[エクスプローラー] ですべてのテーブルにチェックを入れる。
 
 ![data agent check all tables](image/day1-hands-on-fabric/data-agent-check-all-tabls.png)
 
@@ -830,7 +830,7 @@ Employee 毎のProfitの合計を年毎に出して。
 
 27. [目的と機能の説明] に次の内容を記載し、[公開] をクリックする。
 
-aidata ハンズオンで作成した Fabric Data Agent
+pdpv2 ハンズオンで作成した Fabric Data Agent
 
 ![publish data agent](image/day1-hands-on-fabric/data-agent-publish-02.png)
 

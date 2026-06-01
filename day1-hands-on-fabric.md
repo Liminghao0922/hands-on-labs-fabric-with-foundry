@@ -96,7 +96,7 @@ az account set --subscription "＜サブスクリプション名＞"
 server="pdpv2sqldbserver＜No＞"
 adminuser="＜SQL Database のサーバー管理者となる Entra ID アカウント名(@ドメイン名含む)＞"
 adminsid="＜adminuser のオブジェクト ID＞"
-az sql server create --name $server --resource-group "dpv2handson＜No＞" --location "japaneast" --enable-ad-only-auth --external-admin-principal-type User --external-admin-name $adminuser --external-admin-sid $adminsid
+az sql server create --name $server --resource-group "dppv2handson＜No＞" --location "japaneast" --enable-ad-only-auth --external-admin-principal-type User --external-admin-name $adminuser --external-admin-sid $adminsid
 ```
 
 > ※ ＜＞内は自身の環境に応じて適宜書き換える。

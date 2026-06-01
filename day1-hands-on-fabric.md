@@ -644,7 +644,7 @@ calendar
 > ※ 後ろ 1 行を選択して実行すると、次の内容が返ってくる。
 > ![check kql result](image/day1-hands-on-fabric/check-kql-result-02.png)
 
-31. [pdpv2eventhouse＜No＞] を開き、エクスプローラーで [pdpv2eventhouse＜No＞] - [Tables] の […] をクリックし、プルダウンメニューから [新しいショートカット] をクリックする。
+31. [pdpv2lakehouse＜No＞] を開き、エクスプローラーで [pdpv2lakehouse＜No＞] - [Tables] の […] をクリックし、プルダウンメニューから [新しいショートカット] をクリックする。
 
 ![create lackhouse new shortcut](image/day1-hands-on-fabric/lackhouse-new-shortcut.png)
 

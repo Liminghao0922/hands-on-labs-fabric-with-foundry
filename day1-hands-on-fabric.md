@@ -506,7 +506,10 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
    > ※ 記載のないパラメータは既定値を使用する。
    > ※ 当ハンズオンはイベントハブの名前空間の SAS キーを使用しているが、実際のプロジェクトにおいては、セキュリティを考慮し、イベントハブ毎の SAS キーを作成することを推奨する。
    > ※ ユーザー名とパスワードは、Azure ポータルで Event Hubs を開き、内容を確認する。
-   >
+   > 
+   > ※ Shared Access key name と Shared Access Key の確認方法
+   > Azure Portal から作成した Event Hubs 名前空間を開き、さらに Event Hubs 一覧から作成した Event hub を開く。共有アクセスポリシー（Shared access policies）→ 追加を選択する。ポリシー名 fabric-listen とし、権限は Listen のみ。作成した fabric-listen を開き、Primary key のコピーアイコンをクリックする。
+   > この場合、Shared Access key name は fabric-listen となり、Shared Access Key は Primary key の価となる。
 
    ![eventhub configuration](image/day1-hands-on-fabric/eventhub-configuration.png)
 

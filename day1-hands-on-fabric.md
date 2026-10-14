@@ -49,7 +49,7 @@
    [https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-sdk-for-net%2Fmain%2Fsdk%2Feventhub%2FAzure.Messaging.EventHubs.Processor%2Fassets%2Fsamples-azure-deploy.json](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-sdk-for-net%2Fmain%2Fsdk%2Feventhub%2FAzure.Messaging.EventHubs.Processor%2Fassets%2Fsamples-azure-deploy.json)
    > ※ ログインが求められる場合は、当ハンズオン用のテナントで自身に割り当てられたアカウントでログインする。
    > ※ ログイン先が当ハンズオン用に割り当てられたサブスクリプションであることを確認しておく。
-   >
+   > ※ Edit template を開く。"kind": "BlobStorage" の箇所を "kind": "StorageV2" に変更し、Save する。
 3. [カスタム デプロイ] 画面で次の内容を入力し、Event Hubs 及び Blob Storage を作成する。
 
 　| 属性 | 値 |

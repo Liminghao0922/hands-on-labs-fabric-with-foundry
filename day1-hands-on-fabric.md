@@ -661,9 +661,9 @@ INSERT INTO [Integration].[StockItem_Staging] EXEC Integration.GetStockItemUpdat
 
 ![check latest data result](image/day1-hands-on-fabric/eventstream-check-latest-data-result.png)
 
-17. 画面中央で [イベントの変換または変換先の追加] をクリックすると表示されるプルダウンメニューで [フィールドの管理] をクリックする。
+17. 画面中央で [イベントの変換または変換先の追加] をクリックすると表示されるプルダウンメニューで [イベントの変換] にある [フィールドの管理] をクリックする。
 
-![event stream fields management](image/day1-hands-on-fabric/eventstream-manage-fields.png)
+<img width="1640" height="370" alt="image" src="https://github.com/user-attachments/assets/91004e06-e2cb-40f1-9572-7375d0f30e4a" />
 
 18. 表示が [ManageFields] に代わるので、鉛筆マークをクリックする。
 

@@ -151,6 +151,116 @@ S3 = DTU 100 : 12 分 ～ 15 分
 > ※ データベースのリストアは少し時間がかかるため、処理中も後続の作業を進める。
 > ※ Azure ポータルでリストアを行っている場合は、後続の作業をブラウザの別タブで行う。
 
+**代替手順：Cloud Shell の Bash から SqlPackage と Entra アクセストークンでインポートする**
+
+自身の PC で SQL Server Management Studio のインストールや操作が難しい場合は、以下の方法を使用する。
+
+> **重要：インポート先は新規または空の DB とする。** 既存データへの追加・マージではない。以下では既存の `aidatadb` を変更せず、別名の `aidatadb_import<NO>` を作成する。
+
+**1. 変数を設定する**
+
+Azure ポータル右上の Cloud Shell を **Bash** で開き、以下を実行する。`<NO>` は自身の参加者番号に置き換え、リソースグループ名、サーバー名、サブスクリプション ID は実環境に合わせる。以降のコマンドは同じ Cloud Shell セッションで順番に実行し、各コマンドが正常終了したことを確認してから次へ進む。
+
+```bash
+resourceGroup="rg-aidatahandson<NO>"
+server="aidatasqldbserver<NO>"
+database="aidatadb_import<NO>"
+
+az account set --subscription "<対象サブスクリプションID>"
+az account show --query "{tenant:tenantId,user:user.name}" -o json
+```
+
+実行ユーザーには、Azure 上の DB 作成権限に加え、**SQL の Entra 管理者等のインポートに必要な権限**が必要となる。手順 7. で設定した Entra 管理者のアカウントを使用する。Azure の IAM ロールだけでは SQL 内の権限は付与されない。また、手順 8. のネットワーク設定が完了していることを確認する。
+
+**2. BACPAC をダウンロードする**
+
+GitHub の閲覧ページではなく、**raw URL** を使用する。
+
+```bash
+workdir="$(mktemp -d)"
+bacpac="$workdir/aidatadb.bacpac"
+
+curl --fail --location --retry 3 \
+  "https://raw.githubusercontent.com/Liminghao0922/hands-on-labs-fabric-with-foundry/main/data/aidatadb.bacpac" \
+  --output "$bacpac"
+
+unzip -t "$bacpac"
+```
+
+**ZIP 検査が正常終了してから次へ進むこと。** HTML や Git LFS のポインターを取得していた場合は、コーチに確認し、BACPAC の実ファイルを取得する。
+
+**3. SqlPackage を用意する**
+
+未導入の場合は、公式の Linux 版を取得する。
+
+```bash
+if command -v sqlpackage >/dev/null 2>&1; then
+  sqlpackageBin="$(command -v sqlpackage)"
+else
+  curl --fail --location \
+    "https://aka.ms/sqlpackage-linux" \
+    --output "$workdir/sqlpackage.zip"
+  unzip -q "$workdir/sqlpackage.zip" -d "$workdir/sqlpackage"
+  chmod u+x "$workdir/sqlpackage/sqlpackage"
+  sqlpackageBin="$workdir/sqlpackage/sqlpackage"
+fi
+
+"$sqlpackageBin" /Version
+```
+
+起動できない場合は、[SqlPackage のダウンロードとインストール](https://learn.microsoft.com/ja-jp/sql/tools/sqlpackage/sqlpackage-download)を参照し、依存ライブラリや Cloud Shell の OS 対応を先に確認する。
+
+**4. 新しい空の DB を作成する**
+
+まず、既存の DB 名を確認する。
+
+```bash
+az sql db list \
+  --resource-group "$resourceGroup" \
+  --server "$server" \
+  --query "[].name" --output tsv
+```
+
+**`$database` に設定した名前の DB が存在しないことを確認してから**、以下を実行する。同名の DB が存在する場合は処理を進めず、`database` を未使用の別名に変更する。S3 は課金されるサービスレベルであり、既存の SSMS 手順と同じ Standard / S3、最大サイズ 10GB で作成する。
+
+```bash
+az sql db create \
+  --resource-group "$resourceGroup" \
+  --server "$server" \
+  --name "$database" \
+  --edition Standard \
+  --service-objective S3 \
+  --max-size 10GB
+```
+
+**5. トークンを取得してインポートする**
+
+トークンの取得が成功した場合のみインポートする。**トークンは表示・共有せず**、実行後に変数を解除する。
+
+```bash
+if token="$(az account get-access-token \
+  --resource https://database.windows.net/ \
+  --query accessToken --output tsv)" && [ -n "$token" ]; then
+  "$sqlpackageBin" \
+    /Action:Import \
+    /SourceFile:"$bacpac" \
+    /TargetServerName:"tcp:$server.database.windows.net,1433" \
+    /TargetDatabaseName:"$database" \
+    /AccessToken:"$token" \
+    /TargetEncryptConnection:True \
+    /TargetTrustServerCertificate:False \
+    /TargetTimeout:60
+else
+  printf '%s\n' "アクセストークンを取得できませんでした。アカウントと権限を確認してください。" >&2
+fi
+
+unset token
+```
+
+SqlPackage の正常終了を確認した後、Azure ポータルのクエリ エディターまたは SSMS 等で `aidatadb_import<NO>` のテーブルと件数を確認する。インポートに失敗した場合は、表示されたエラーを確認する。途中まで取り込まれた DB にそのまま再実行せず、コーチに相談し、新しい空の DB を用意してから再実行する。
+
+> ※ この代替手順を使用した場合、後続のミラーリング設定やパイプラインで **Azure SQL Database に接続する際の DB 名**は、`aidatadb` ではなく、実際に作成した `aidatadb_import<NO>` に読み替える。接続名も実際の DB 名に合わせる。Fabric 側に作成するミラー化されたデータベースの名前は、本文どおり `aidatadb` とする。
+
 10.  ブラウザで新しいタブを開き、次の URL に接続し、Fabric ポータルを開く。
 
 [https://app.fabric.microsoft.com/](https://app.fabric.microsoft.com/)

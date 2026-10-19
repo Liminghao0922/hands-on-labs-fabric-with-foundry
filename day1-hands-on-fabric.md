@@ -55,7 +55,7 @@
    > ※ Edit template を開く。"kind": "BlobStorage" の箇所を "kind": "StorageV2" に変更し、Save する。
 3. [カスタム デプロイ] 画面で次の内容を入力し、Event Hubs 及び Blob Storage を作成する。
 
-　| 属性 | 値 |
+| 属性 | 値 |
 | --- | --- |
 | サブスクリプション | 当ハンズオン用に割り当てられたサブスクリプション |
 | リソース グループ | 当該手順 1. で作成したものを選択（rg-aidatahandson＜No＞） |

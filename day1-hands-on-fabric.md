@@ -115,7 +115,7 @@ az sql server create --name $server --resource-group "rg-aidatahandson＜No＞" 
 > ※ 当ハンズオンはすべてのネットワークからの接続を有効にして行うが、実際のプロジェクトにおいては、セキュリティを考慮したネットワーク設定が必要となるので注意する。
 
 9. コーチから配布された [aidatadb.bacpac](data/aidatadb.bacpac) ファイルを用い、データベースをインポートする。
-SQL Server Management Studio は　https://learn.microsoft.com/ja-jp/ssms/install/install　のサイトからインストール。
+SQL Server Management Studio は　"https://learn.microsoft.com/ja-jp/ssms/install/install"　のサイトからインストール。
 
 
 | 属性                     | 値       |
